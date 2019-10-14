@@ -35,8 +35,8 @@ import java.util.Map;
 
 public abstract class BlockIronFurnaceTileBase extends TileEntityInventory implements ITickableTileEntity, IRecipeHolder, IRecipeHelperPopulator {
     private static final int[] slots_top = new int[]{0};
-    private static final int[] slots_side = new int[]{2, 1};
-    private static final int[] slots_bottom = new int[]{1};
+    private static final int[] slots_bottom = new int[]{2, 1};
+    private static final int[] slots_side = new int[]{1};
 
     private int timer;
     /**

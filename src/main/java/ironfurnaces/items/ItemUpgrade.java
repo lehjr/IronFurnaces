@@ -11,9 +11,11 @@ import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
+import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.tileentity.FurnaceTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
@@ -56,10 +58,16 @@ public class ItemUpgrade extends Item {
                     currentItemBurnTime = ((BlockIronFurnaceTileBase)te).fields.get(1);
                     cooktime = ((BlockIronFurnaceTileBase)te).fields.get(2);
                 }
+
+                BlockState state =  world.getBlockState(pos);
+                Direction facing = state.has(BlockStateProperties.HORIZONTAL_FACING) ? state.get(BlockStateProperties.HORIZONTAL_FACING) : Direction.NORTH;
+
                 BlockState next = this.getNextTierBlock(te, available).getStateForPlacement(ctx2) != null ? this.getNextTierBlock(te, available).getStateForPlacement(ctx2) : null;
                 if (next == null) {
                     return ActionResultType.PASS;
                 }
+                next = next.with(BlockStateProperties.HORIZONTAL_FACING, facing);
+
                 ItemStack input = ((IInventory) te).getStackInSlot(0).copy();
                 ItemStack fuel  = ((IInventory) te).getStackInSlot(1).copy();
                 ItemStack output  = ((IInventory) te).getStackInSlot(2).copy();
