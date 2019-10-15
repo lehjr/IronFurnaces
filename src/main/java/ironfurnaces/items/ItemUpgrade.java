@@ -5,6 +5,7 @@ import ironfurnaces.tileentity.BlockIronFurnaceTileBase;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.HorizontalBlock;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.BlockItemUseContext;
@@ -59,14 +60,10 @@ public class ItemUpgrade extends Item {
                     cooktime = ((BlockIronFurnaceTileBase)te).fields.get(2);
                 }
 
-                BlockState state =  world.getBlockState(pos);
-                Direction facing = state.has(BlockStateProperties.HORIZONTAL_FACING) ? state.get(BlockStateProperties.HORIZONTAL_FACING) : Direction.NORTH;
-
-                BlockState next = this.getNextTierBlock(te, available).getStateForPlacement(ctx2) != null ? this.getNextTierBlock(te, available).getStateForPlacement(ctx2) : null;
+                BlockState next = this.getNextTierBlock(te, available) != null ? this.getNextTierBlock(te, available).getStateForPlacement(ctx2) : null;
                 if (next == null) {
                     return ActionResultType.PASS;
                 }
-                next = next.with(BlockStateProperties.HORIZONTAL_FACING, facing);
 
                 ItemStack input = ((IInventory) te).getStackInSlot(0).copy();
                 ItemStack fuel  = ((IInventory) te).getStackInSlot(1).copy();

@@ -3,16 +3,22 @@ package ironfurnaces.blocks;
 import ironfurnaces.tileentity.BlockIronFurnaceTileBase;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.HorizontalBlock;
+import net.minecraft.block.RedstoneTorchBlock;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.inventory.container.INamedContainerProvider;
+import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.particles.ParticleTypes;
+import net.minecraft.state.BooleanProperty;
+import net.minecraft.state.DirectionProperty;
 import net.minecraft.state.StateContainer;
 import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.stats.Stats;
+import net.minecraft.tileentity.AbstractFurnaceTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
@@ -31,10 +37,9 @@ import javax.annotation.Nullable;
 import java.util.Random;
 
 public abstract class BlockIronFurnaceBase extends Block {
-
     public BlockIronFurnaceBase(Properties properties) {
         super(properties);
-        this.setDefaultState(this.getDefaultState().with(BlockStateProperties.LIT, false));
+        this.setDefaultState(this.getDefaultState().with(RedstoneTorchBlock.LIT, false));
     }
 
     @Nullable
@@ -50,7 +55,7 @@ public abstract class BlockIronFurnaceBase extends Block {
 
     @Override
     public int getLightValue(BlockState state, IEnviromentBlockReader world, BlockPos pos) {
-        return state.get(BlockStateProperties.LIT) ? 14 : 0;
+        return state.get(RedstoneTorchBlock.LIT) ? 14 : 0;
     }
 
     @Override
@@ -60,8 +65,12 @@ public abstract class BlockIronFurnaceBase extends Block {
             if (stack.hasDisplayName()) {
                 te.setCustomName(stack.getDisplayName());
             }
-            world.setBlockState(pos, state.with(BlockStateProperties.FACING, getFacingFromEntity(pos, entity)), 2);
         }
+    }
+
+    @Override
+    public BlockState getStateForPlacement(BlockItemUseContext useContext) {
+        return (BlockState)this.getDefaultState().with(HorizontalBlock.HORIZONTAL_FACING, useContext.getPlacementHorizontalFacing().getOpposite());
     }
 
     @Override
@@ -86,7 +95,7 @@ public abstract class BlockIronFurnaceBase extends Block {
 
     @OnlyIn(Dist.CLIENT)
     public void animateTick(BlockState state, World world, BlockPos pos, Random rand) {
-        if (state.get(BlockStateProperties.LIT)) {
+        if (state.get(RedstoneTorchBlock.LIT)) {
             double d0 = (double) pos.getX() + 0.5D;
             double d1 = (double) pos.getY();
             double d2 = (double) pos.getZ() + 0.5D;
@@ -94,7 +103,7 @@ public abstract class BlockIronFurnaceBase extends Block {
                 world.playSound(d0, d1, d2, SoundEvents.BLOCK_FURNACE_FIRE_CRACKLE, SoundCategory.BLOCKS, 1.0F, 1.0F, false);
             }
 
-            Direction direction = state.get(BlockStateProperties.FACING);
+            Direction direction = state.get(HorizontalBlock.HORIZONTAL_FACING);
             Direction.Axis direction$axis = direction.getAxis();
             double d3 = 0.52D;
             double d4 = rand.nextDouble() * 0.6D - 0.3D;
@@ -120,6 +129,6 @@ public abstract class BlockIronFurnaceBase extends Block {
 
     @Override
     protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
-        builder.add(BlockStateProperties.FACING, BlockStateProperties.LIT);
+        builder.add(HorizontalBlock.HORIZONTAL_FACING, RedstoneTorchBlock.LIT);
     }
 }
